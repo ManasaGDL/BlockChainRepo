@@ -81,7 +81,7 @@ const columnChartOptions = {
 
 // ==============================|| SALES COLUMN CHART ||============================== //
 
-const SalesColumnChart = () => {
+const SalesColumnChart = ({slot,weekData}) => {
   const theme = useTheme();
 
   const { primary, secondary } = theme.palette.text;
@@ -91,24 +91,47 @@ const SalesColumnChart = () => {
   const primaryMain = theme.palette.primary.main;
   const successDark = theme.palette.success.dark;
 
-  const [series] = useState([
-    {
-      name: 'Net Profit',
-      data: [180, 90, 135, 114, 120, 145]
-    },
-    {
-      name: 'Revenue',
-      data: [120, 45, 78, 150, 168, 99]
-    }
+  const [series,setSeries] = useState([
+    // {
+    //   name: 'Net Profit',
+    //   data: [180, 90, 135, 114, 120, 145]
+    // },
+    // {
+    //   name: 'Revenue',
+    //   data: [120, 45, 78, 150, 168, 99]
+    // }
   ]);
-
+  const mappingName ={
+    "count":"Certificates Generated",
+    "verified_users":"Verified Certificates",
+    "revoked_users":"Revoked Users"
+  }
   const [options, setOptions] = useState(columnChartOptions);
+useEffect(()=>{
+  if(weekData.length>0 && slot==="week")
+  {
+    const result = Object.keys(weekData[0]).reduce((acc, key) => {
+      if (!["day","month"].includes(key)) {
+        acc.push({
+          name: mappingName[key]||key,
+          data: weekData.map(item => item[key])
+        });
+      }
+      return acc;
+    }, []);
 
+  setSeries(result)
+  }
+},[weekData])
   useEffect(() => {
     setOptions((prevState) => ({
       ...prevState,
-      colors: [warning, primaryMain],
+      colors: [warning, primaryMain,"#9370db"],
       xaxis: {
+        categories:
+          slot === 'month'
+            ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
         labels: {
           style: {
             colors: [secondary, secondary, secondary, secondary, secondary, secondary]
@@ -118,7 +141,7 @@ const SalesColumnChart = () => {
       yaxis: {
         labels: {
           style: {
-            colors: [secondary]
+            colors: [secondary,primary]
           }
         }
       },

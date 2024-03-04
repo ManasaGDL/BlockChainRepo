@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
@@ -58,36 +59,81 @@ function stableSort(array, comparator) {
 
 const headCells = [
   {
-    id: 'trackingNo',
+    id: 'id',
     align: 'left',
     disablePadding: false,
-    label: 'Tracking No.'
+    label: 'Certicate ID'
   },
   {
-    id: 'name',
+    id: 'client_name',
     align: 'left',
     disablePadding: true,
-    label: 'Product Name'
+    label: 'Institute'
   },
   {
-    id: 'fat',
+    id: 'dept_name',
     align: 'right',
     disablePadding: false,
-    label: 'Total Order'
+    label: 'Course'
   },
   {
-    id: 'carbs',
+    id: 'degree',
     align: 'left',
     disablePadding: false,
 
-    label: 'Status'
+    label: 'Degree'
   },
   {
-    id: 'protein',
+    id: 'semister',
     align: 'right',
     disablePadding: false,
-    label: 'Total Amount'
-  }
+    label: 'Semister'
+  },
+  {
+    id: 'student_id',
+    align: 'right',
+    disablePadding: false,
+    label: 'Student ID'
+  },
+  {
+    id: 'student_name',
+    align: 'right',
+    disablePadding: false,
+    label: 'Student name'
+  },
+  {
+    id: 'certi_type',
+    align: 'right',
+    disablePadding: false,
+    label: 'Certificate Type'
+  },
+ 
+
+ 
+  {
+    id: 'completed_date',
+    align: 'right',
+    disablePadding: false,
+    label: 'Completed on'
+  },
+  {
+    id: 'grade',
+    align: 'right',
+    disablePadding: false,
+    label: 'Grade'
+  },
+  {
+    id: 'issued_date',
+    align: 'right',
+    disablePadding: false,
+    label: 'Issued date'
+  },
+  {
+    id: 'expiration_date',
+    align: 'right',
+    disablePadding: false,
+    label: 'Valid Till'
+  },
 ];
 
 // ==============================|| ORDER TABLE - HEADER ||============================== //
@@ -154,7 +200,7 @@ OrderStatus.propTypes = {
 
 // ==============================|| ORDER TABLE ||============================== //
 
-export default function OrderTable() {
+export default function OrderTable({data}) {
   const [order] = useState('asc');
   const [orderBy] = useState('trackingNo');
   const [selected] = useState([]);

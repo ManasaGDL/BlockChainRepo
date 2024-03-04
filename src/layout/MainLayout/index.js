@@ -11,6 +11,7 @@ import Drawer from './Drawer';
 import Header from './Header';
 import navigation from 'menu-items';
 import Breadcrumbs from 'components/@extended/Breadcrumbs';
+import {dropdownContext,dataContext,loadingContext,tableDataContext,tableloadingContext} from 'context/DropDownContext';
 
 // types
 import { openDrawer } from 'store/reducers/menu';
@@ -23,7 +24,11 @@ const MainLayout = () => {
   const dispatch = useDispatch();
 
   const { drawerOpen } = useSelector((state) => state.menu);
-
+const [ valuesSelected ,setValuesSelected] = useState({"client_id":0})
+const [ data, setData] = useState({})//chart Data
+const [ loading , setLoading] = useState(false)
+const [ tabledata, setTabledata] = useState([])
+const [ tableLoading,setTableLoading]= useState(false)
   // drawer toggler
   const [open, setOpen] = useState(drawerOpen);
   const handleDrawerToggle = () => {
@@ -45,6 +50,11 @@ const MainLayout = () => {
   }, [drawerOpen]);
 
   return (
+    <dropdownContext.Provider value={{ valuesSelected ,setValuesSelected}}>
+      <dataContext.Provider value={{data, setData}}>
+        <loadingContext.Provider value={{loading,setLoading}}>
+          <tableDataContext.Provider value={{tabledata, setTabledata}}>
+            <tableloadingContext.Provider value={{tableLoading,setTableLoading}}>
     <Box sx={{ display: 'flex', width: '100%' }}>
       <Header open={open} handleDrawerToggle={handleDrawerToggle} />
       <Drawer open={open} handleDrawerToggle={handleDrawerToggle} />
@@ -54,6 +64,11 @@ const MainLayout = () => {
         <Outlet />
       </Box>
     </Box>
+    </tableloadingContext.Provider>
+    </tableDataContext.Provider>
+    </loadingContext.Provider>
+    </dataContext.Provider>
+    </dropdownContext.Provider>
   );
 };
 

@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
@@ -16,15 +17,15 @@ const LogoSection = ({ sx, to }) => {
   const { defaultId } = useSelector((state) => state.menu);
   const dispatch = useDispatch();
   return (
-    <ButtonBase
-      disableRipple
-      component={Link}
-      onClick={() => dispatch(activeItem({ openItem: [defaultId] }))}
-      to={!to ? config.defaultPath : to}
-      sx={sx}
-    >
-      <Logo />
-    </ButtonBase>
+    // <ButtonBase
+    //   disableRipple
+    //   component={Link}
+    //   onClick={() => dispatch(activeItem({ openItem: [defaultId] }))}
+    //   to={!to ? config.defaultPath : to}
+    //   sx={sx}
+    // >
+     <Logo />
+   //
   );
 };
 

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+/*eslint-disable*/
+import { useState , useEffect ,useContext} from 'react';
 
 // material-ui
 import {
@@ -15,7 +16,8 @@ import {
   MenuItem,
   Stack,
   TextField,
-  Typography
+  Typography,
+  Backdrop
 } from '@mui/material';
 
 // project import
@@ -26,7 +28,8 @@ import ReportAreaChart from './ReportAreaChart';
 import SalesColumnChart from './SalesColumnChart';
 import MainCard from 'components/MainCard';
 import AnalyticEcommerce from 'components/cards/statistics/AnalyticEcommerce';
-
+import DataTable from './DataTable';
+import LoadingPanel from 'components/ReusableComponents/LoadingPanel';
 // assets
 import { GiftOutlined, MessageOutlined, SettingOutlined } from '@ant-design/icons';
 import avatar1 from 'assets/images/users/avatar-1.png';
@@ -34,6 +37,8 @@ import avatar2 from 'assets/images/users/avatar-2.png';
 import avatar3 from 'assets/images/users/avatar-3.png';
 import avatar4 from 'assets/images/users/avatar-4.png';
 
+import api from 'api/api';
+import { dropdownContext ,loadingContext,dataContext} from 'context/DropDownContext';
 // avatar style
 const avatarSX = {
   width: 36,
@@ -70,27 +75,108 @@ const status = [
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 
 const DashboardDefault = () => {
-  const [value, setValue] = useState('today');
+  const [value, setValue] = useState('month');
   const [slot, setSlot] = useState('week');
+  const [ cardsData , setCardsData] = useState({})
+  
+  const [ weekData, setWeekData] = useState([])
+  const [ monthData , setMonthData] = useState([])
+ const { data , setData} = useContext(dataContext)
+ const {valuesSelected } = useContext(dropdownContext)
+ const { loading,setLoading} = useContext(loadingContext)
+ const [ tabledata, setTableData] = useState([])
+ const [tableRawData , setTableRawdata] = useState([])
+ const [ tableloading, settableloading] = useState(false)
+useEffect(()=>{
+
+ 
+  console.log("data in dashboard",data)
+const getCardsData =async()=>{
+  try{
+ 
+     const res = await api.getCardsData(valuesSelected?.client_id===0?{"all":1}:valuesSelected)
+    
+   setCardsData(res?.data)
+  }
+  catch(e)
+  {
+  console.log(e)
+  }
+
+}
+
+getCardsData();
+settableloading(true)
+// getTableData()
+
+},[data,valuesSelected])
+const getTableData=async()=>{
+  try{
+
+const res = await api.get_table_data(valuesSelected?.client_id,valuesSelected?.dept_id||0)
+settableloading(false)
+setTableRawdata(res.data)
+setTableData(res?.data.map(row=>{
+  return {id:row?.id,"client_name":row?.client.client_name,
+  "dept_name":row?.departments.dept_name,
+  "degree":row?.departments.dept_name,
+"semister":"*",
+"student_id":"*",
+'student_name':"*",
+'certi_type':'*',
+'completed_date':'*',
+'grade':"*",
+'issued_date':row?.created_at,
+'expiration_date':"*"
+
+
+
+,
+}
+}))
+  }catch(e)
+  {
+
+  }
+}
+
+useEffect(()=>{
+if(Object.prototype.hasOwnProperty.call(data, "monthly"))
+{
+  setMonthData(data?.monthly)
+}
+if(Object.prototype.hasOwnProperty.call(data, "weekly"))
+{
+  setWeekData(data?.weekly)
+}
+},[data])
 
   return (
-    <Grid container rowSpacing={4.5} columnSpacing={2.75}>
-      {/* row 1 */}
+    <Grid container rowSpacing={6} columnSpacing={2.75}>
+      <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1,backgroundColor: 'rgba(255, 255, 255, 0.5)' }} open={loading}>
+             {  <LoadingPanel></LoadingPanel>}
+            </Backdrop>
       <Grid item xs={12} sx={{ mb: -2.25 }}>
         <Typography variant="h5">Dashboard</Typography>
       </Grid>
-      <Grid item xs={12} sm={6} md={4} lg={3}>
-        <AnalyticEcommerce title="Total Page Views" count="4,42,236" percentage={59.3} extra="35,000" />
+      <Grid item xs={12} sm={6} md={4} lg={4}>
+        <AnalyticEcommerce title="Total Certificates Generated" count={cardsData?.total_certificates_generated}
+        //  percentage={59.3} extra="35,000" 
+         />
       </Grid>
-      <Grid item xs={12} sm={6} md={4} lg={3}>
-        <AnalyticEcommerce title="Total Users" count="78,250" percentage={70.5} extra="8,900" />
+      <Grid item xs={12} sm={6} md={4} lg={4}>
+        <AnalyticEcommerce title="Active Users" count={cardsData?.active_users_count} 
+        />
       </Grid>
-      <Grid item xs={12} sm={6} md={4} lg={3}>
-        <AnalyticEcommerce title="Total Order" count="18,800" percentage={27.4} isLoss color="warning" extra="1,943" />
+      <Grid item xs={12} sm={6} md={4} lg={4}>
+        <AnalyticEcommerce title="Verified Certificates" count={cardsData?.users_certificate_verified_count} 
+        // percentage={27.4} isLoss color="warning" extra="1,943" 
+        />
       </Grid>
-      <Grid item xs={12} sm={6} md={4} lg={3}>
-        <AnalyticEcommerce title="Total Sales" count="$35,078" percentage={27.4} isLoss color="warning" extra="$20,395" />
-      </Grid>
+      {/* <Grid item xs={12} sm={6} md={4} lg={3}>
+        <AnalyticEcommerce title="Revoked Users" count={cardsData?.users_revoked_count} 
+        />
+      </Grid> */}
 
       <Grid item md={8} sx={{ display: { sm: 'none', md: 'block', lg: 'none' } }} />
 
@@ -98,7 +184,7 @@ const DashboardDefault = () => {
       <Grid item xs={12} md={7} lg={8}>
         <Grid container alignItems="center" justifyContent="space-between">
           <Grid item>
-            <Typography variant="h5">Unique Visitor</Typography>
+            <Typography variant="h5">Activity Chart</Typography>
           </Grid>
           <Grid item>
             <Stack direction="row" alignItems="center" spacing={0}>
@@ -123,7 +209,7 @@ const DashboardDefault = () => {
         </Grid>
         <MainCard content={false} sx={{ mt: 1.5 }}>
           <Box sx={{ pt: 1, pr: 2 }}>
-            <IncomeAreaChart slot={slot} />
+            <IncomeAreaChart slot={slot} weekData={weekData} monthData={monthData}/>
           </Box>
         </MainCard>
       </Grid>
@@ -140,7 +226,7 @@ const DashboardDefault = () => {
               <Typography variant="h6" color="textSecondary">
                 This Week Statistics
               </Typography>
-              <Typography variant="h3">$7,650</Typography>
+              <Typography variant="h3"></Typography>
             </Stack>
           </Box>
           <MonthlyBarChart />
@@ -156,7 +242,8 @@ const DashboardDefault = () => {
           <Grid item />
         </Grid>
         <MainCard sx={{ mt: 2 }} content={false}>
-          <OrdersTable />
+          {/* <OrdersTable  data={tabledata}/> */}
+          <DataTable/>
         </MainCard>
       </Grid>
       <Grid item xs={12} md={5} lg={4}>
@@ -189,7 +276,7 @@ const DashboardDefault = () => {
       <Grid item xs={12} md={7} lg={8}>
         <Grid container alignItems="center" justifyContent="space-between">
           <Grid item>
-            <Typography variant="h5">Sales Report</Typography>
+            {/* <Typography variant="h5">Sales Report</Typography> */}
           </Grid>
           <Grid item>
             <TextField
@@ -211,11 +298,11 @@ const DashboardDefault = () => {
         <MainCard sx={{ mt: 1.75 }}>
           <Stack spacing={1.5} sx={{ mb: -12 }}>
             <Typography variant="h6" color="secondary">
-              Net Profit
+            Activity History
             </Typography>
-            <Typography variant="h4">$1560</Typography>
+            <Typography variant="h4"></Typography>
           </Stack>
-          <SalesColumnChart />
+          <SalesColumnChart slot={slot} weekData={weekData}/>
         </MainCard>
       </Grid>
       <Grid item xs={12} md={5} lg={4}>
