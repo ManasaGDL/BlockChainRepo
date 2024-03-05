@@ -39,6 +39,7 @@ const MobileSection = () => {
     }
 
     prevOpen.current = open;
+  
   }, [open]);
 
   return (

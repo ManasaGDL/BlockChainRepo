@@ -164,6 +164,7 @@ if(nextApi?.reset)
     totalRows:nextApi.totalRows})
 
 }
+return undefined;
 },[nextApi?.reset])
 useEffect(()=>{
  

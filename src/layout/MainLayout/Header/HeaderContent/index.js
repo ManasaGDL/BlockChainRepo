@@ -28,35 +28,41 @@ const {tabledata, setTabledata} = useContext(tableDataContext)
 const {tableLoading,setTableLoading}= useContext(tableloadingContext)
  const { nextApi,setNextApi} = useContext(nextContext)
  const {cardsData,setCardsData} = useContext(cardsContext)
-  useEffect(async()=>{
+  useEffect(()=>{
+    const get_data=async()=>{
 
-    const res= await api.getData_univeristywise({"all":1})
-  getCardsData()
-    setData(res?.data)
-    setTableLoading(true)
-    const res2 = await api.get_table_data(0,0,nextApi.page,nextApi.pageSize)
-  
-    setNextApi({...nextApi,"next":res2.data?.next,"totalRows":res2?.data?.count})
-    setTabledata(res2?.data?.results?.map(row=>{
-    return {id:row?.id,"client_name":row?.client.client_name,
-    "dept_name":row?.departments.dept_name,
-    "degree":row?.departments.dept_name,
-  "semister":"*",
-  "student_id":"*",
-  'student_name':"*",
-  'certi_type':'*',
-  'completed_date':'*',
-  'grade':"*",
-  'issued_date':row?.created_at,
-  'expiration_date':"*"
-  
-  
-  
-  ,
+      const res= await api.getData_univeristywise({"all":1})
+    getCardsData()
+      setData(res?.data)
+      setTableLoading(true)
+      const res2 = await api.get_table_data(0,0,nextApi.page,nextApi.pageSize)
+    
+      setNextApi({...nextApi,"next":res2.data?.next,"totalRows":res2?.data?.count})
+      setTabledata(res2?.data?.results?.map(row=>{
+      return {id:row?.id,"client_name":row?.client.client_name,
+      "dept_name":row?.departments.dept_name,
+      "degree":row?.departments.dept_name,
+    "semister":"*",
+    "student_id":"*",
+    'student_name':"*",
+    'certi_type':'*',
+    'completed_date':'*',
+    'grade':"*",
+    'issued_date':row?.created_at,
+    'expiration_date':"*"
+    
+    
+    
+    ,
+    }
+    }))
+    setTableLoading(false)
+    
+    }
+    get_data()
   }
-  }))
-  setTableLoading(false)
-  },[])
+ 
+    ,[])
  useEffect(()=>{
   
 const getUniversities_departments=async()=>{
@@ -79,6 +85,7 @@ console.log(e)
 }
 setLoading(true)
 getUniversities_departments()
+
  },[])
 useEffect(()=>{
 get_Table_data()

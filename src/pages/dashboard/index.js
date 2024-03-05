@@ -98,6 +98,7 @@ if(Object.prototype.hasOwnProperty.call(data, "weekly"))
 {
   setWeekData(data?.weekly)
 }
+return undefined;
 },[data])
 
   return (

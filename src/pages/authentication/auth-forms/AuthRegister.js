@@ -50,6 +50,7 @@ const AuthRegister = () => {
 
   useEffect(() => {
     changePassword('');
+    return undefined;
   }, []);
 
   return (

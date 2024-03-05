@@ -117,7 +117,7 @@ useEffect(()=>{
           data: weekData.map(item => item[key])
         });
       }
-      return acc;
+       return acc
     }, []);
 
   setSeries(result)

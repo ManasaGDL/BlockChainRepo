@@ -14,6 +14,7 @@ const ScrollTop = ({ children }) => {
       left: 0,
       behavior: 'smooth'
     });
+ 
   }, [pathname]);
 
   return children || null;

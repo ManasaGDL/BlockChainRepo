@@ -58,7 +58,7 @@ if(weekData.length>0 && slot==="week")
         data: weekData.map(item => item[key])
       });
     }
-    return acc;
+     return acc;
   }, []);
 
  setSeries(result)

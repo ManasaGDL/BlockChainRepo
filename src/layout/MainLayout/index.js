@@ -42,7 +42,7 @@ const [ cardsData, setCardsData] = useState({})//cards
   useEffect(() => {
     setOpen(!matchDownLG);
     dispatch(openDrawer({ drawerOpen: !matchDownLG }));
-
+  
    
   }, [matchDownLG]);
 
