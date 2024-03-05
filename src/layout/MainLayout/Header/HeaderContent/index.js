@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { useState , useEffect , useContext} from "react"; 
-import {dropdownContext,dataContext,loadingContext,tableDataContext,tableloadingContext} from "context/DropDownContext";
+import {dropdownContext,dataContext,loadingContext,cardsContext,tableDataContext,tableloadingContext,nextContext} from "context/DropDownContext";
 // material-ui
 import { Box,useMediaQuery ,Button,Stack} from '@mui/material';
 import DropDown from 'components/ReusableComponents/DropDown';
@@ -26,15 +26,18 @@ const HeaderContent = () => {
   const { loading,setLoading} = useContext(loadingContext)
 const {tabledata, setTabledata} = useContext(tableDataContext)
 const {tableLoading,setTableLoading}= useContext(tableloadingContext)
-  const [ tableRawdata, settableRawdata] = useState([])
+ const { nextApi,setNextApi} = useContext(nextContext)
+ const {cardsData,setCardsData} = useContext(cardsContext)
   useEffect(async()=>{
 
     const res= await api.getData_univeristywise({"all":1})
- 
+  getCardsData()
     setData(res?.data)
     setTableLoading(true)
-    const res2 = await api.get_table_data(0)
-    setTabledata(res2?.data.map(row=>{
+    const res2 = await api.get_table_data(0,0,nextApi.page,nextApi.pageSize)
+  
+    setNextApi({...nextApi,"next":res2.data?.next,"totalRows":res2?.data?.count})
+    setTabledata(res2?.data?.results?.map(row=>{
     return {id:row?.id,"client_name":row?.client.client_name,
     "dept_name":row?.departments.dept_name,
     "degree":row?.departments.dept_name,
@@ -58,82 +61,7 @@ const {tableLoading,setTableLoading}= useContext(tableloadingContext)
   
 const getUniversities_departments=async()=>{
 try{
-  let data=[
-    {
-        "client_id": 1,
-        "client_name": "Geetham's university",
-        "is_active": true,
-        "departments": [
-            {
-                "dept_no": 1,
-                "dept_name": "CSE",
-                "is_active": 1
-            },
-            {
-                "dept_no": 2,
-                "dept_name": "IT",
-                "is_active": 1
-            },
-            {
-                "dept_no": 3,
-                "dept_name": "ECE",
-                "is_active": 1
-            }
-        ]
-    },
-    {
-        "client_id": 2,
-        "client_name": "Andhra university",
-        "is_active": true,
-        "departments": [
-            {
-                "dept_no": 4,
-                "dept_name": "EEE",
-                "is_active": 1
-            },
-            {
-                "dept_no": 6,
-                "dept_name": "MBM",
-                "is_active": 1
-            },
-            {
-                "dept_no": 7,
-                "dept_name": "MCA",
-                "is_active": 1
-            }
-        ]
-    },
-    {
-        "client_id": 3,
-        "client_name": "Acharya Nagarjuna University",
-        "is_active": true,
-        "departments": [
-            {
-                "dept_no": 5,
-                "dept_name": "MECH",
-                "is_active": 1
-            }
-        ]
-    },
-    {
-        "client_id": 4,
-        "client_name": "Adikavi Nannaya University",
-        "is_active": true,
-        "departments": []
-    },
-    {
-        "client_id": 5,
-        "client_name": "Dr. Y.S.R. Horticultural University",
-        "is_active": true,
-        "departments": []
-    },
-    {
-        "client_id": 6,
-        "client_name": "Jawaharlal Nehru Technological University",
-        "is_active": true,
-        "departments": []
-    }
-]
+
 const res = await api.getDropDown();
 const allOption = {
   "client_id": 0,
@@ -152,17 +80,61 @@ console.log(e)
 setLoading(true)
 getUniversities_departments()
  },[])
+useEffect(()=>{
+get_Table_data()
+},[nextApi.page,nextApi.pageSize])
 
+const get_Table_data=async()=>{
+  setTableLoading(true)
+  const res2 = await api.get_table_data(valuesSelected?.client_id,valuesSelected?.dept_id||0,nextApi.page,nextApi.pageSize)
+  setNextApi({...nextApi,"totalRows":res2.data.count})
+  setTabledata(res2?.data.results.map(row=>{
+     return {id:row?.id,"client_name":row?.client.client_name,
+     "dept_name":row?.departments.dept_name,
+     "degree":row?.departments.dept_name,
+   "semister":"*",
+   "student_id":"*",
+   'student_name':"*",
+   'certi_type':'*',
+   'completed_date':'*',
+   'grade':"*",
+   'issued_date':row?.created_at,
+   'expiration_date':"*"
+   
+   
+   
+   ,
+   }
+   }))
 
+ 
+  setTableLoading(false)
+}
+const getCardsData =async()=>{
+  try{
+ 
+     const res = await api.getCardsData(valuesSelected?.client_id===0?{"all":1}:valuesSelected)
+    
+   setCardsData(res?.data)
+  }
+  catch(e)
+  {
+  console.log(e)
+  }
 
+}
  const submitData=async()=>{
  try{
+  
 setLoading(true)
 setTableLoading(true)
+getCardsData()
+// setNextApi({...nextApi,"page":1,"pageSize":nextApi.pageSize})
  const res= await api.getData_univeristywise(valuesSelected?.client_id===0?{"all":1}:valuesSelected)
  setLoading(false)
- const res2 = await api.get_table_data(valuesSelected?.client_id,valuesSelected?.dept_id||0)
- setTabledata(res2?.data.map(row=>{
+ const res2 = await api.get_table_data(valuesSelected?.client_id,valuesSelected?.dept_id||0,1,nextApi.pageSize)
+ setNextApi({...nextApi,"page":1,totalRows:res2.data.count,"reset":true})
+ setTabledata(res2?.data.results.map(row=>{
     return {id:row?.id,"client_name":row?.client.client_name,
     "dept_name":row?.departments.dept_name,
     "degree":row?.departments.dept_name,
@@ -183,10 +155,10 @@ setTableLoading(true)
  setData(res?.data)
 
  setTableLoading(false)
-
+//  setNextApi({...nextApi,"page":1,totalRows:res2.data.count,"reset":false})
  }catch(e)
  {
-
+console.log(e)
  }
 }
   return (

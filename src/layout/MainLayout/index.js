@@ -11,7 +11,7 @@ import Drawer from './Drawer';
 import Header from './Header';
 import navigation from 'menu-items';
 import Breadcrumbs from 'components/@extended/Breadcrumbs';
-import {dropdownContext,dataContext,loadingContext,tableDataContext,tableloadingContext} from 'context/DropDownContext';
+import {dropdownContext,dataContext,loadingContext,tableDataContext,tableloadingContext,nextContext,cardsContext} from 'context/DropDownContext';
 
 // types
 import { openDrawer } from 'store/reducers/menu';
@@ -27,8 +27,10 @@ const MainLayout = () => {
 const [ valuesSelected ,setValuesSelected] = useState({"client_id":0})
 const [ data, setData] = useState({})//chart Data
 const [ loading , setLoading] = useState(false)
-const [ tabledata, setTabledata] = useState([])
+const [ tabledata, setTabledata] = useState([])//table
 const [ tableLoading,setTableLoading]= useState(false)
+const [ nextApi,setNextApi] = useState({page:1,pageSize:10,next:"",totalRows:0})
+const [ cardsData, setCardsData] = useState({})//cards
   // drawer toggler
   const [open, setOpen] = useState(drawerOpen);
   const handleDrawerToggle = () => {
@@ -41,12 +43,12 @@ const [ tableLoading,setTableLoading]= useState(false)
     setOpen(!matchDownLG);
     dispatch(openDrawer({ drawerOpen: !matchDownLG }));
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, [matchDownLG]);
 
   useEffect(() => {
     if (open !== drawerOpen) setOpen(drawerOpen);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [drawerOpen]);
 
   return (
@@ -55,6 +57,8 @@ const [ tableLoading,setTableLoading]= useState(false)
         <loadingContext.Provider value={{loading,setLoading}}>
           <tableDataContext.Provider value={{tabledata, setTabledata}}>
             <tableloadingContext.Provider value={{tableLoading,setTableLoading}}>
+              <nextContext.Provider value={{ nextApi,setNextApi}}>
+                <cardsContext.Provider value={{ cardsData,setCardsData}}>
     <Box sx={{ display: 'flex', width: '100%' }}>
       <Header open={open} handleDrawerToggle={handleDrawerToggle} />
       <Drawer open={open} handleDrawerToggle={handleDrawerToggle} />
@@ -64,6 +68,8 @@ const [ tableLoading,setTableLoading]= useState(false)
         <Outlet />
       </Box>
     </Box>
+    </cardsContext.Provider>
+    </nextContext.Provider>
     </tableloadingContext.Provider>
     </tableDataContext.Provider>
     </loadingContext.Provider>

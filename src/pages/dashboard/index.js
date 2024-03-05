@@ -38,7 +38,7 @@ import avatar3 from 'assets/images/users/avatar-3.png';
 import avatar4 from 'assets/images/users/avatar-4.png';
 
 import api from 'api/api';
-import { dropdownContext ,loadingContext,dataContext} from 'context/DropDownContext';
+import { dropdownContext ,loadingContext,dataContext,cardsContext} from 'context/DropDownContext';
 // avatar style
 const avatarSX = {
   width: 36,
@@ -77,7 +77,7 @@ const status = [
 const DashboardDefault = () => {
   const [value, setValue] = useState('month');
   const [slot, setSlot] = useState('week');
-  const [ cardsData , setCardsData] = useState({})
+  const { cardsData , setCardsData} = useContext(cardsContext)
   
   const [ weekData, setWeekData] = useState([])
   const [ monthData , setMonthData] = useState([])
@@ -87,58 +87,7 @@ const DashboardDefault = () => {
  const [ tabledata, setTableData] = useState([])
  const [tableRawData , setTableRawdata] = useState([])
  const [ tableloading, settableloading] = useState(false)
-useEffect(()=>{
 
- 
-  console.log("data in dashboard",data)
-const getCardsData =async()=>{
-  try{
- 
-     const res = await api.getCardsData(valuesSelected?.client_id===0?{"all":1}:valuesSelected)
-    
-   setCardsData(res?.data)
-  }
-  catch(e)
-  {
-  console.log(e)
-  }
-
-}
-
-getCardsData();
-settableloading(true)
-// getTableData()
-
-},[data,valuesSelected])
-const getTableData=async()=>{
-  try{
-
-const res = await api.get_table_data(valuesSelected?.client_id,valuesSelected?.dept_id||0)
-settableloading(false)
-setTableRawdata(res.data)
-setTableData(res?.data.map(row=>{
-  return {id:row?.id,"client_name":row?.client.client_name,
-  "dept_name":row?.departments.dept_name,
-  "degree":row?.departments.dept_name,
-"semister":"*",
-"student_id":"*",
-'student_name':"*",
-'certi_type':'*',
-'completed_date':'*',
-'grade':"*",
-'issued_date':row?.created_at,
-'expiration_date':"*"
-
-
-
-,
-}
-}))
-  }catch(e)
-  {
-
-  }
-}
 
 useEffect(()=>{
 if(Object.prototype.hasOwnProperty.call(data, "monthly"))
@@ -237,7 +186,7 @@ if(Object.prototype.hasOwnProperty.call(data, "weekly"))
       <Grid item xs={12} md={7} lg={8}>
         <Grid container alignItems="center" justifyContent="space-between">
           <Grid item>
-            <Typography variant="h5">Recent Orders</Typography>
+            <Typography variant="h5">Certificate Details</Typography>
           </Grid>
           <Grid item />
         </Grid>
@@ -278,7 +227,7 @@ if(Object.prototype.hasOwnProperty.call(data, "weekly"))
           <Grid item>
             {/* <Typography variant="h5">Sales Report</Typography> */}
           </Grid>
-          <Grid item>
+          {/* <Grid item>
             <TextField
               id="standard-select-currency"
               size="small"
@@ -293,9 +242,9 @@ if(Object.prototype.hasOwnProperty.call(data, "weekly"))
                 </MenuItem>
               ))}
             </TextField>
-          </Grid>
+          </Grid> */}
         </Grid>
-        <MainCard sx={{ mt: 1.75 }}>
+        {/* <MainCard sx={{ mt: 1.75 }}>
           <Stack spacing={1.5} sx={{ mb: -12 }}>
             <Typography variant="h6" color="secondary">
             Activity History
@@ -303,9 +252,9 @@ if(Object.prototype.hasOwnProperty.call(data, "weekly"))
             <Typography variant="h4"></Typography>
           </Stack>
           <SalesColumnChart slot={slot} weekData={weekData}/>
-        </MainCard>
+        </MainCard> */}
       </Grid>
-      <Grid item xs={12} md={5} lg={4}>
+      {/* <Grid item xs={12} md={5} lg={4}>
         <Grid container alignItems="center" justifyContent="space-between">
           <Grid item>
             <Typography variant="h5">Transaction History</Typography>
@@ -423,7 +372,7 @@ if(Object.prototype.hasOwnProperty.call(data, "weekly"))
             </Button>
           </Stack>
         </MainCard>
-      </Grid>
+      </Grid> */}
     </Grid>
   );
 };

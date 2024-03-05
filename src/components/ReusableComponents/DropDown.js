@@ -10,10 +10,7 @@ const DropDown = ({data})=>{
   const {valuesSelected ,setValuesSelected} = useContext(dropdownContext)
   const [ universities , setUniversities] = useState([])
   // const [ departments , setDepartments] = useState([])
-  console.log("DDValues",valuesSelected )
-useEffect(()=>{
-console.log("Uni",universities)
-},[universities])
+
 useEffect(()=>{
   
 if(data.length>0)
@@ -61,7 +58,7 @@ setUniversities(data)
         id="demo-simple-select"
         disabled={valuesSelected ?.client_id===0}
         style={{ width: '300px',height:"50px" ,color:"#1976d2", borderRadius: '8px',fontWeight:"500"}} 
-         value={valuesSelected ?.dept_id}
+         value={valuesSelected ?.dept_id||0}
          onChange={handleDepartmentChange}
       >
        {valuesSelected ?.client_id!='0' && 

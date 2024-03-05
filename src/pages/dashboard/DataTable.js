@@ -7,8 +7,9 @@ import { Button } from "@mui/material";
 import LoadingPanel from "components/ReusableComponents/LoadingPanel";
 import dayjs from "dayjs";
 import Stack from "@mui/material/Stack";
-import { tableDataContext, tableloadingContext } from "context/DropDownContext";
+import { tableDataContext, tableloadingContext,nextContext } from "context/DropDownContext";
 import { makeStyles } from '@mui/styles';
+import api from "api/api";
 const headCells = [
    
     {
@@ -50,12 +51,12 @@ const headCells = [
       disablePadding: false,
       headerName: 'Semister'
     },
-    {
-        field: 'student_id',
-      align: 'right',
-      disablePadding: false,
-      headerName: 'Student ID'
-    },
+    // {
+    //     field: 'student_id',
+    //   align: 'right',
+    //   disablePadding: false,
+    //   headerName: 'Student ID'
+    // },
     {
         field: 'student_name',
       align: 'right',
@@ -89,7 +90,7 @@ const headCells = [
       disablePadding: false,
       headerName: 'Issued date',
       renderCell:(val)=>{
-        return dayjs(val.value).format("YYYY/MM/DD hh:mm:ss A")
+        return dayjs(val.value).format("YYYY/MM/DD ")
       }
     },
     {
@@ -97,14 +98,12 @@ const headCells = [
       align: 'right',
       disablePadding: false,
       headerName: 'Valid Till',
-    //   renderCell:(val)=>{
-    //     return dayjs(val.value).format("YYYY/MM/DD hh:mm:ss A")
-    //   }
+    
     },
   ];
-// const columns = [
-//   {
-//     field:'id',
+
+
+
 //   headerName:'Incident ID',
 //   headerClassName:"header",
  
@@ -149,8 +148,27 @@ const DataTable = () =>{
 const {tabledata, setTabledata} = useContext(tableDataContext)
 const {tableLoading,setTableLoading} = useContext(tableloadingContext)
 const classes = useStyles();
+const [ page , setPage] = useState(1)
   const [ selectedRow ,setSelectedRow] = useState({})
+const { nextApi,setNextApi} = useContext(nextContext)
+const [paginationModel, setPaginationModel] = useState({
+  pageSize: nextApi.pageSize,
+  page: nextApi.page-1,
+  totalRows:nextApi.totalRows
+});
+useEffect(()=>{
+if(nextApi?.reset)
+{
+  setPaginationModel({pageSize: nextApi.pageSize,
+    page: nextApi.page-1,
+    totalRows:nextApi.totalRows})
 
+}
+},[nextApi?.reset])
+useEffect(()=>{
+ 
+  setNextApi({...nextApi,"pageSize":paginationModel.pageSize,"page":paginationModel.page+1,"reset":false})
+},[paginationModel])
   const handleRowClick = (e) =>{
    setSelectedRow(e)
   }
@@ -160,53 +178,35 @@ const classes = useStyles();
   const handleDelete =()=>{
     alert(selectedRow.id)
   }
+  const handlePaginationChange=(e)=>{
+    console.log(e)
+     setPaginationModel({...nextApi,"pageSize":e.pageSize,"page":e.page})
+   
+  }
     return <><div >
    
-      <Box sx={{ height: '100%', width: '100%' }}>
-      <Stack sx={{pb:1}}
-      direction="row"
-      justifyContent="flex-end"
-      alignItems="flex-end"
-      spacing={2}
-     >
-    {/* <Button variant="contained" sx={{color:"white"}} onClick={e=>handlePostMortem()}>POSTMORTEM</Button>
-    <Button variant="contained" sx={{color:"white"}} >VIEW INCIDENT</Button>
-    <Button variant="contained" sx={{color:"white"}} onClick={e=>handleDelete()}>DELETE</Button> */}
-     </Stack>
-       {
-        tableLoading?  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-        <CircularProgress />
-      </div>:
-       tabledata?.length>0?
-       <div style={{ height: '100%' }}>
-          <DataGrid  columns={headCells} rows={tabledata} autoHeight={true}  pageSize={10}
-        rowsPerPageOptions={[5]}
-        pageSizeOptions={[5, 10, 25,50]}
-        headerClassName={classes.customHeader}
-        initialState={{
-            pagination: {
-              paginationModel: { pageSize: 10, page: 0 },
-            },
-          }}
-        // onRowClick={handleRowClick}
-    //     sx={{
-    //       "&.MuiDataGrid-root .MuiDataGrid-cell:focus-within": {
-    //          outline: "none !important",
-    //       },
+      <Box sx={{ width: '100%',  position: 'relative'}}>
+      {/* <div style={{ height: "100%", width: '100%', position: 'relative' }}> */}
+      {tableLoading && (
+        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+          <CircularProgress />
+        </div>
+      )}
+      <DataGrid  columns={headCells} rows={tabledata} 
+   autoHeight={true}
+          rowCount={nextApi?.totalRows}
           
-    //    }}
+          pagination
+   
+        pageSizeOptions={[5, 10, 25,50]}
+   
+        paginationModel={paginationModel}
+        paginationMode="server"
+        onPaginationModelChange={handlePaginationChange}
+       
       />
-       </div> 
-       :
-      <div>
-      {/* Display only column names */}
-      <div style={{ height: 400, width: '100%' }}>
-        <DataGrid columns={headCells} autoHeight={true} rows={[]}  headerClassName={classes.customHeader}/>
- </div>
-    <p>No data available</p>
-     </div>
-    
-      }
+    {/* </div> */}
+      
         </Box>
     </div>
     </>

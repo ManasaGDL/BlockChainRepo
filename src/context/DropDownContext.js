@@ -6,4 +6,5 @@ export const  dataContext = createContext({})
 export const tableDataContext = createContext([])
 export const loadingContext = createContext()
 export const tableloadingContext= createContext()
-
+export const nextContext = createContext()
+export const cardsContext = createContext({})

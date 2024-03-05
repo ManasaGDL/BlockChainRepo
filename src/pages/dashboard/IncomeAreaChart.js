@@ -60,7 +60,7 @@ if(weekData.length>0 && slot==="week")
     }
     return acc;
   }, []);
-console.log("result-weely",result)
+
  setSeries(result)
 }
 if(monthData.length>0 && slot==="month")
