@@ -18,8 +18,8 @@ import api from "api/api";
 
 const HeaderContent = () => {
   const matchesXs = useMediaQuery((theme) => theme.breakpoints.down('md'));
-  const [ university_departments_data , setUniversity_departments_data] = useState([{"client_id": 0,
-  "client_name": "All",
+  const [ university_departments_data , setUniversity_departments_data] = useState([{"id": 0,
+  "full_name": "All",
   "departments":''}])
   const {valuesSelected } = useContext(dropdownContext)
   const { data , setData} = useContext(dataContext)
@@ -39,21 +39,21 @@ const {tableLoading,setTableLoading}= useContext(tableloadingContext)
     
       setNextApi({...nextApi,"next":res2.data?.next,"totalRows":res2?.data?.count})
       setTabledata(res2?.data?.results?.map(row=>{
-      return {id:row?.id,"client_name":row?.client.client_name,
-      "dept_name":row?.departments.dept_name,
-      "degree":row?.departments.dept_name,
-    "semister":"*",
+      return {id:row?.id,"full_name":row?.user?.full_name,
+      "dept_name":row?.department?.department_name,
+      "degree":row?.department?.department_name,
+      "course":row.course?.course_name,
+    "semister":row?.student?.studentmarks[0]?.semester,
     "student_id":"*",
-    'student_name':"*",
-    'certi_type':'*',
-    'completed_date':'*',
-    'grade':"*",
-    'issued_date':row?.created_at,
-    'expiration_date':"*"
+    'student_name':row?.student?.student_name,
+    'certi_type':row?.certificatetype?.certificate_name||'--',
+    'completed_date':row?.student?.studentmarks[0]?.certificate_issued_date||'--',
+  'grade': row?.student?.studentmarks[0]?.grade,
+  'issued_date':row?.student?.studentmarks[0]?.certificate_completion_date||'--',
     
     
     
-    ,
+    
     }
     }))
     setTableLoading(false)
@@ -63,6 +63,8 @@ const {tableLoading,setTableLoading}= useContext(tableloadingContext)
   }
  
     ,[])
+
+
  useEffect(()=>{
   
 const getUniversities_departments=async()=>{
@@ -70,8 +72,8 @@ try{
 
 const res = await api.getDropDown();
 const allOption = {
-  "client_id": 0,
-  "client_name": "All",
+  "id": 0,
+  "full_name": "All",
   "departments": ''
 };
 setLoading(false)
@@ -88,29 +90,28 @@ getUniversities_departments()
 
  },[])
 useEffect(()=>{
-get_Table_data()
+ get_Table_data()
+
 },[nextApi.page,nextApi.pageSize])
 
 const get_Table_data=async()=>{
   setTableLoading(true)
-  const res2 = await api.get_table_data(valuesSelected?.client_id,valuesSelected?.dept_id||0,nextApi.page,nextApi.pageSize)
+  
+  const res2 = await api.get_table_data(valuesSelected?.issuer_id,valuesSelected?.department_id||0,nextApi.page,nextApi.pageSize)
   setNextApi({...nextApi,"totalRows":res2.data.count})
   setTabledata(res2?.data.results.map(row=>{
-     return {id:row?.id,"client_name":row?.client.client_name,
-     "dept_name":row?.departments.dept_name,
-     "degree":row?.departments.dept_name,
-   "semister":"*",
+     return {id:row?.id,"full_name":row?.user?.full_name,
+     "dept_name":row?.department?.department_name,
+     "degree":row?.department?.department_name,
+     "course":row.course?.course_name,
+     "semister":row?.student?.studentmarks[0]?.semester,
    "student_id":"*",
-   'student_name':"*",
-   'certi_type':'*',
-   'completed_date':'*',
-   'grade':"*",
-   'issued_date':row?.created_at,
-   'expiration_date':"*"
+   'student_name':row?.student?.student_name,
+   'certi_type':row?.certificatetype?.certificate_name||'--',
+   'completed_date':row?.student?.studentmarks[0]?.certificate_issued_date||'--',
+  'grade': row?.student?.studentmarks[0]?.grade,
+  'issued_date':row?.student?.studentmarks[0]?.certificate_completion_date||'--',
    
-   
-   
-   ,
    }
    }))
 
@@ -120,7 +121,7 @@ const get_Table_data=async()=>{
 const getCardsData =async()=>{
   try{
  
-     const res = await api.getCardsData(valuesSelected?.client_id===0?{"all":1}:valuesSelected)
+     const res = await api.getCardsData(valuesSelected?.issuer_id===0?{"all":1}:valuesSelected)
     
    setCardsData(res?.data)
   }
@@ -137,26 +138,24 @@ setLoading(true)
 setTableLoading(true)
 getCardsData()
 // setNextApi({...nextApi,"page":1,"pageSize":nextApi.pageSize})
- const res= await api.getData_univeristywise(valuesSelected?.client_id===0?{"all":1}:valuesSelected)
- setLoading(false)
- const res2 = await api.get_table_data(valuesSelected?.client_id,valuesSelected?.dept_id||0,1,nextApi.pageSize)
+ const res= await api.getData_univeristywise(valuesSelected?.issuer_id===0?{"all":1}:valuesSelected)
+
+ const res2 = await api.get_table_data(valuesSelected?.issuer_id,valuesSelected?.department_id||0,1,nextApi.pageSize)
  setNextApi({...nextApi,"page":1,totalRows:res2.data.count,"reset":true})
+ 
  setTabledata(res2?.data.results.map(row=>{
-    return {id:row?.id,"client_name":row?.client.client_name,
-    "dept_name":row?.departments.dept_name,
-    "degree":row?.departments.dept_name,
-  "semister":"*",
+    return {id:row?.id,"full_name":row?.user?.full_name,
+    "dept_name":row?.department?.department_name,
+    "degree":row?.department?.department_name,
+    "course":row.course?.course_name,
+    "semister":row?.student?.studentmarks[0]?.semester,
   "student_id":"*",
-  'student_name':"*",
-  'certi_type':'*',
-  'completed_date':'*',
-  'grade':"*",
-  'issued_date':row?.created_at,
-  'expiration_date':"*"
+  'student_name':row?.student?.student_name,
+  'certi_type':row?.certificatetype?.certificate_name||'--',
+  'completed_date':row?.student?.studentmarks[0]?.certificate_issued_date||'--',
+  'grade': row?.student?.studentmarks[0]?.grade,
+  'issued_date':row?.student?.studentmarks[0]?.certificate_completion_date||'--',
   
-  
-  
-  ,
   }
   }))
  setData(res?.data)
@@ -173,24 +172,20 @@ console.log(e)
       {!matchesXs && <Search />}
       {matchesXs && <Box sx={{ width: '100%', ml: 1 }} />}
 
-      {/* <IconButton
-        component={Link}
-        href="https://github.com/codedthemes/mantis-free-react-admin-template"
-        target="_blank"
-        disableRipple
-        color="secondary"
-        title="Download Free Version"
-        sx={{ color: 'text.primary', bgcolor: 'grey.100' }}
-      >
-        <GithubOutlined />
-      </IconButton> */}
+
       <Stack direction="row" spacing={2} alignItems="center">
      <DropDown data={university_departments_data}/>
+     {/* <Stack>
+     <div>Select either University or University-department</div>
+     </Stack> */}
      <Button variant="contained" color="primary" onClick={()=>submitData()}>Submit</Button>
+    
      </Stack>
-      <Notification />
+     
+      {/* <Notification />
       {!matchesXs && <Profile />}
-      {matchesXs && <MobileSection />}
+      {matchesXs && <MobileSection />} */}
+      
     </>
   );
 };

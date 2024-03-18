@@ -24,27 +24,31 @@ setUniversities(data)
 
 
   const handleUniversityChange=(e)=>{
-    const { dept_id, ...newValuesSelected } = valuesSelected;
-    setValuesSelected({...newValuesSelected ,'client_id':e.target.value})
+    const { department_id, ...newValuesSelected } = valuesSelected;
+    setValuesSelected({...newValuesSelected ,'issuer_id':e.target.value})
   }
   const handleDepartmentChange=(e)=>{
     
-    setValuesSelected({...valuesSelected ,'dept_id':e.target.value})
+    setValuesSelected({...valuesSelected ,'department_id':e.target.value})
   }
     return <Stack direction="row" spacing={2}>
+   
+    
+
     <FormControl>
+   
       <InputLabel id="demo-simple-select-label" style={{color:"#1976d2",fontWeight:"500",fontSize:"14px"}}
       >University</InputLabel>
       <Select
         labelId="demo-simple-select-label"
         id="demo-simple-select"
          style={{ width: '300px',height:"50px" ,color:"#1976d2",fontWeight:"500"}}  
-         value={valuesSelected ?.client_id}
+         value={valuesSelected ?.issuer_id}
         onChange={handleUniversityChange}
       >
         {
           universities.map(university=>{
-            return <MenuItem key={university.client_id} value={university.client_id}>{university.client_name}</MenuItem>
+            return <MenuItem key={university.id} value={university.id}>{university.full_name}</MenuItem>
           })
         }
        
@@ -53,23 +57,25 @@ setUniversities(data)
   
     <FormControl>
       <InputLabel id="demo-simple-select-label" style={{color:"#1976d2",fontWeight:"500",fontSize:"14px"}}>Department</InputLabel>
+      
       <Select
         labelId="demo-simple-select-label"
         id="demo-simple-select"
-        disabled={valuesSelected ?.client_id===0}
+        disabled={valuesSelected ?.issuer_id===0}
         style={{ width: '300px',height:"50px" ,color:"#1976d2", borderRadius: '8px',fontWeight:"500"}} 
-         value={valuesSelected ?.dept_id||0}
+         value={valuesSelected ?.department_id||0}
          onChange={handleDepartmentChange}
       >
-       {valuesSelected ?.client_id!='0' && 
-                    universities.find(client => client.client_id === valuesSelected ?.client_id)?.departments.map(department => (
-                        <MenuItem key={department.dept_no} value={department.dept_id}>
-                            {department.dept_name}
+       {valuesSelected ?.issuer_id!='0' && 
+                    universities.find(client => client.id === valuesSelected ?.issuer_id)?.departments.map(department => (
+                        <MenuItem key={department.department_id} value={department.department_id}>
+                            {department.department_name}
                         </MenuItem>
                     ))
                 }
       </Select>
     </FormControl>
+ 
   </Stack>
 }
 

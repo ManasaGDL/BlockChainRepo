@@ -1,7 +1,7 @@
 /*eslint-disable*/
 import PropTypes from 'prop-types';
-import { useState, useEffect } from 'react';
-
+import { useState, useEffect ,useContext} from 'react';
+import { loadingContext } from 'context/DropDownContext';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 
@@ -38,7 +38,7 @@ const IncomeAreaChart = ({ slot ,weekData,monthData}) => {
   const line = theme.palette.divider;
 
   const [options, setOptions] = useState(areaChartOptions);
-   
+  const { loading,setLoading} = useContext(loadingContext)
   const [series, setSeries] = useState([
     
   ]);
@@ -48,7 +48,7 @@ const IncomeAreaChart = ({ slot ,weekData,monthData}) => {
     "revoked_users":"Revoked Users"
   }
 useEffect(()=>{
-
+setLoading(true)
 if(weekData.length>0 && slot==="week")
 {
   const result = Object.keys(weekData[0]).reduce((acc, key) => {
@@ -80,6 +80,7 @@ if(monthData.length>0 && slot==="month")
   
  setSeries(result)
 }
+setLoading(false)
 },[weekData,monthData,slot])
 
   useEffect(() => {

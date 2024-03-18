@@ -1,6 +1,6 @@
 /*eslint-disable*/
 import { useState , useEffect ,useContext} from 'react';
-
+import CircularProgress from '@mui/material/CircularProgress';
 // material-ui
 import {
   Avatar,
@@ -103,9 +103,9 @@ return undefined;
 
   return (
     <Grid container rowSpacing={6} columnSpacing={2.75}>
-      <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1,backgroundColor: 'rgba(255, 255, 255, 0.5)' }} open={loading}>
+      {/* <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1,backgroundColor: 'rgba(255, 255, 255, 0.5)' }} open={loading}>
              {  <LoadingPanel></LoadingPanel>}
-            </Backdrop>
+            </Backdrop> */}
       <Grid item xs={12} sx={{ mb: -2.25 }}>
         <Typography variant="h5">Dashboard</Typography>
       </Grid>
@@ -159,7 +159,18 @@ return undefined;
         </Grid>
         <MainCard content={false} sx={{ mt: 1.5 }}>
           <Box sx={{ pt: 1, pr: 2 }}>
+          <Box sx={{ width: '100%',  position: 'relative'}}>
+            
+      
+      {/* <div style={{ height: "100%", width: '100%', position: 'relative' }}> */}
+
+      {loading && (
+        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)'}}>
+          <CircularProgress />
+        </div>
+      )}
             <IncomeAreaChart slot={slot} weekData={weekData} monthData={monthData}/>
+          </Box>
           </Box>
         </MainCard>
       </Grid>

@@ -11,7 +11,7 @@ import Drawer from './Drawer';
 import Header from './Header';
 import navigation from 'menu-items';
 import Breadcrumbs from 'components/@extended/Breadcrumbs';
-import {dropdownContext,dataContext,loadingContext,tableDataContext,tableloadingContext,nextContext,cardsContext} from 'context/DropDownContext';
+import {dropdownContext,dataContext,loadingContext,tableDataContext,tableloadingContext,exportContext,nextContext,cardsContext} from 'context/DropDownContext';
 
 // types
 import { openDrawer } from 'store/reducers/menu';
@@ -24,13 +24,14 @@ const MainLayout = () => {
   const dispatch = useDispatch();
 
   const { drawerOpen } = useSelector((state) => state.menu);
-const [ valuesSelected ,setValuesSelected] = useState({"client_id":0})
+const [ valuesSelected ,setValuesSelected] = useState({"issuer_id":0})
 const [ data, setData] = useState({})//chart Data
 const [ loading , setLoading] = useState(false)
 const [ tabledata, setTabledata] = useState([])//table
 const [ tableLoading,setTableLoading]= useState(false)
 const [ nextApi,setNextApi] = useState({page:1,pageSize:10,next:"",totalRows:0})
 const [ cardsData, setCardsData] = useState({})//cards
+const [ exportData , setExportData] = useState([])
   // drawer toggler
   const [open, setOpen] = useState(drawerOpen);
   const handleDrawerToggle = () => {
@@ -59,6 +60,7 @@ const [ cardsData, setCardsData] = useState({})//cards
             <tableloadingContext.Provider value={{tableLoading,setTableLoading}}>
               <nextContext.Provider value={{ nextApi,setNextApi}}>
                 <cardsContext.Provider value={{ cardsData,setCardsData}}>
+                  <exportContext.Provider value={{exportData,setExportData}}>
     <Box sx={{ display: 'flex', width: '100%' }}>
       <Header open={open} handleDrawerToggle={handleDrawerToggle} />
       <Drawer open={open} handleDrawerToggle={handleDrawerToggle} />
@@ -68,6 +70,7 @@ const [ cardsData, setCardsData] = useState({})//cards
         <Outlet />
       </Box>
     </Box>
+    </exportContext.Provider>
     </cardsContext.Provider>
     </nextContext.Provider>
     </tableloadingContext.Provider>
