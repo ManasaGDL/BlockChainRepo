@@ -17,12 +17,22 @@ const headCells = [
     field: 'id',
       align: 'center',
       disablePadding: false,
-      headerName: 'Certicate ID',
+      headerName: 'ID',
       flex:1,
       minWidth:100,
-   
+     
       headerAlign: 'center',
    
+    },
+    {
+      field: 'certificate_id',
+      align: 'center',
+      disablePadding: false,
+      headerName: 'CertificateID',
+      flex:1,
+      minWidth:100,
+     
+      headerAlign: 'center',
     },
     {
          field: 'full_name',
@@ -34,7 +44,7 @@ const headCells = [
     },
     {
         field: 'course',
-      align: 'right',
+      align: 'left',
       disablePadding: false,
       headerName: 'Course',
       flex:1,
@@ -54,14 +64,14 @@ const headCells = [
       disablePadding: false,
       headerName: 'Semister',
     
-      align:"left"
+      align:"center"
     },
-    // {
-    //     field: 'student_id',
-    //   align: 'right',
-    //   disablePadding: false,
-    //   headerName: 'Student ID'
-    // },
+    {
+        field: 'student_id',
+      align: 'center',
+      disablePadding: false,
+      headerName: 'Student ID'
+    },
     {
         field: 'student_name',
      
@@ -99,25 +109,12 @@ const headCells = [
       align: 'right',
       disablePadding: false,
       headerName: 'Issued date',
-      // renderCell:(val)=>{
-      //   return dayjs(val.value).format("YYYY/MM/DD ")||'--'
-      // }
+     
     },
-    // {
-    //     field: 'expiration_date',
-    //   align: 'left',
-    //   disablePadding: false,
-    //   headerName: 'Valid Till',
     
-    // },
   ];
 
 
-
-
- 
-//   flex: 1,
-//   minWidth: 150,
 //   // ,width:120
 //   },
 //   {
@@ -168,9 +165,7 @@ const [paginationModel, setPaginationModel] = useState({
   page: nextApi.page-1,
   totalRows:nextApi.totalRows
 });
-useEffect(()=>{
-console.log("tabledata",tabledata)
-},[tabledata])
+
 useEffect(()=>{
 
 if(nextApi?.reset)
@@ -207,10 +202,10 @@ useEffect(()=>{
      key: 'full_name',   
      label: 'Institute',   
     },
-    // {
-    //   key:"dept_name",
-    //   label:"Department"
-    // },
+    {
+      key:"certificate_id",
+      label:"CertificateID"
+    },
     {
       key: 'course', 
       label: 'Course',
@@ -224,7 +219,11 @@ useEffect(()=>{
 
       label: 'Semister'
     },
-    
+    {
+      key:'student_id',
+      label:"StudentID"
+    },
+
     {
       key: 'student_name',  
       label: 'Student name'
@@ -252,14 +251,14 @@ useEffect(()=>{
  try{
  
  const res = await api.getExportData(valuesSelected.issuer_id,valuesSelected.department_id)
-console.log("export",res.data)
  setExportData(res?.data.map(row=>{
   return {id:row?.id,"full_name":row?.user?.full_name,
   "dept_name":row?.department?.department_name,
   "degree":row?.department?.department_name,
+  "certificate_id":row?.certificate_id,
   "course":row.course?.course_name,
   "semister":row?.student?.studentmarks[0]?.semester,
-  "student_id":"*",
+  "student_id":row?.student?.student_id,
   'student_name':row?.student?.student_name,
   'certi_type':row?.certificatetype?.certificate_name||'--',
   'completed_date':row?.student?.studentmarks[0]?.certificate_issued_date||'--',

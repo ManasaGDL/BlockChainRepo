@@ -41,10 +41,11 @@ const {tableLoading,setTableLoading}= useContext(tableloadingContext)
       setTabledata(res2?.data?.results?.map(row=>{
       return {id:row?.id,"full_name":row?.user?.full_name,
       "dept_name":row?.department?.department_name,
+      'certificate_id':row.certificate_id||'--',
       "degree":row?.department?.department_name,
       "course":row.course?.course_name,
     "semister":row?.student?.studentmarks[0]?.semester,
-    "student_id":"*",
+    "student_id":row?.student?.student_id,
     'student_name':row?.student?.student_name,
     'certi_type':row?.certificatetype?.certificate_name||'--',
     'completed_date':row?.student?.studentmarks[0]?.certificate_issued_date||'--',
@@ -101,11 +102,12 @@ const get_Table_data=async()=>{
   setNextApi({...nextApi,"totalRows":res2.data.count})
   setTabledata(res2?.data.results.map(row=>{
      return {id:row?.id,"full_name":row?.user?.full_name,
+     'certificate_id':row.certificate_id||'--',
      "dept_name":row?.department?.department_name,
      "degree":row?.department?.department_name,
      "course":row.course?.course_name,
      "semister":row?.student?.studentmarks[0]?.semester,
-   "student_id":"*",
+     "student_id":row?.student?.student_id,
    'student_name':row?.student?.student_name,
    'certi_type':row?.certificatetype?.certificate_name||'--',
    'completed_date':row?.student?.studentmarks[0]?.certificate_issued_date||'--',
@@ -149,7 +151,8 @@ getCardsData()
     "degree":row?.department?.department_name,
     "course":row.course?.course_name,
     "semister":row?.student?.studentmarks[0]?.semester,
-  "student_id":"*",
+    'certificate_id':row.certificate_id||'--',
+    "student_id":row?.student?.student_id,
   'student_name':row?.student?.student_name,
   'certi_type':row?.certificatetype?.certificate_name||'--',
   'completed_date':row?.student?.studentmarks[0]?.certificate_issued_date||'--',
@@ -161,7 +164,7 @@ getCardsData()
  setData(res?.data)
 
  setTableLoading(false)
-//  setNextApi({...nextApi,"page":1,totalRows:res2.data.count,"reset":false})
+
  }catch(e)
  {
 console.log(e)
