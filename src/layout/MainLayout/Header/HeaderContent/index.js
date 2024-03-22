@@ -33,6 +33,7 @@ const {tableLoading,setTableLoading}= useContext(tableloadingContext)
 
       const res= await api.getData_univeristywise({"all":1})
     getCardsData()
+    setLoading(true)
       setData(res?.data)
       setTableLoading(true)
       const res2 = await api.get_table_data(0,0,nextApi.page,nextApi.pageSize)

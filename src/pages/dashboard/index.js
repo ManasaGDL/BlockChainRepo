@@ -90,6 +90,7 @@ const DashboardDefault = () => {
 
 
 useEffect(()=>{
+  setLoading(true)
 if(Object.prototype.hasOwnProperty.call(data, "monthly"))
 {
   setMonthData(data?.monthly)
@@ -98,7 +99,7 @@ if(Object.prototype.hasOwnProperty.call(data, "weekly"))
 {
   setWeekData(data?.weekly)
 }
-return undefined;
+setLoading(false)
 },[data])
 
   return (
@@ -110,16 +111,16 @@ return undefined;
         <Typography variant="h5">Dashboard</Typography>
       </Grid>
       <Grid item xs={12} sm={6} md={4} lg={4}>
-        <AnalyticEcommerce title="Total Certificates Generated" count={cardsData?.total_certificates_generated}
+        <AnalyticEcommerce title="Total Certificates Generated" loading={loading} count={cardsData?.total_certificates_generated}
         //  percentage={59.3} extra="35,000" 
          />
       </Grid>
       <Grid item xs={12} sm={6} md={4} lg={4}>
-        <AnalyticEcommerce title="Active Users" count={cardsData?.active_users_count} 
+        <AnalyticEcommerce title="Active Users" count={cardsData?.active_users_count} loading={loading}
         />
       </Grid>
       <Grid item xs={12} sm={6} md={4} lg={4}>
-        <AnalyticEcommerce title="Verified Certificates" count={cardsData?.users_certificate_verified_count} 
+        <AnalyticEcommerce title="Verified Certificates" loading={loading} count={cardsData?.users_certificate_verified_count} 
         // percentage={27.4} isLoss color="warning" extra="1,943" 
         />
       </Grid>
